@@ -1,0 +1,28 @@
+{
+  "name": "@wellbeing/desktop-agent",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "tsx src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "electron dist/main.js",
+    "lint": "eslint . --ext .ts",
+    "typecheck": "tsc -p tsconfig.json --pretty false"
+  },
+  "dependencies": {
+    "@nut-tree-fork/nut-js": "^4.2.0",
+    "axios": "^1.7.9",
+    "electron": "^33.2.1",
+    "get-windows": "^9.3.0",
+    "socket.io-client": "^4.8.1",
+    "systeminformation": "^5.23.8",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

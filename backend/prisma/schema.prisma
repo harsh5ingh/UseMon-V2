@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductivityCategory {
+  WORK
+  STUDY
+  CODING
+  ENTERTAINMENT
+  SOCIAL
+  SHOPPING
+  OTHER
+}
+
+enum NotificationSource {
+  SLACK
+  TEAMS
+  DISCORD
+  WHATSAPP
+  CHROME
+  OUTLOOK
+  OTHER
+}
+
+model User {
+  id              String            @id @default(cuid())
+  email           String            @unique
+  name            String
+  createdAt       DateTime          @default(now())
+  sessions        ActivitySession[]
+  notifications   Notification[]
+  focusSessions   FocusSession[]
+  appLimits       AppLimit[]
+  streakDays      StreakDay[]
+}
+
+model Application {
+  id          String                 @id @default(cuid())
+  name        String                 @unique
+  bundleId    String?
+  iconColor   String                 @default("#4F7CFF")
+  category    ProductivityCategory   @default(OTHER)
+  sessions    ActivitySession[]
+  limits      AppLimit[]
+}
+
+model ActivitySession {
+  id                String                 @id @default(cuid())
+  userId            String
+  appId             String
+  windowTitle       String
+  browserUrl        String?
+  browserTabTitle   String?
+  category          ProductivityCategory
+  productivityScore Int
+  startedAt         DateTime
+  endedAt           DateTime?
+  durationSeconds   Int                    @default(0)
+  idleSeconds       Int                    @default(0)
+  keyboardEvents    Int                    @default(0)
+  mouseEvents       Int                    @default(0)
+  createdAt         DateTime               @default(now())
+  user              User                   @relation(fields: [userId], references: [id])
+  app               Application            @relation(fields: [appId], references: [id])
+
+  @@index([userId, startedAt])
+  @@index([appId, startedAt])
+}
+
+model FocusSession {
+  id              String   @id @default(cuid())
+  userId          String
+  startedAt       DateTime
+  endedAt         DateTime?
+  durationSeconds Int      @default(0)
+  completed       Boolean  @default(false)
+  modeMinutes     Int
+  interruptions   Int      @default(0)
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@index([userId, startedAt])
+}
+
+model Notification {
+  id        String             @id @default(cuid())
+  userId    String
+  source    NotificationSource
+  title     String
+  body      String?
+  receivedAt DateTime          @default(now())
+  user      User               @relation(fields: [userId], references: [id])
+
+  @@index([userId, receivedAt])
+}
+
+model AppLimit {
+  id                 String      @id @default(cuid())
+  userId             String
+  appId              String
+  dailyLimitSeconds  Int
+  warningAtPercent   Int         @default(80)
+  enabled            Boolean     @default(true)
+  user               User        @relation(fields: [userId], references: [id])
+  app                Application @relation(fields: [appId], references: [id])
+
+  @@unique([userId, appId])
+}
+
+model StreakDay {
+  id             String   @id @default(cuid())
+  userId         String
+  date           DateTime
+  completed      Boolean  @default(false)
+  focusSeconds   Int      @default(0)
+  screenSeconds  Int      @default(0)
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, date])
+}

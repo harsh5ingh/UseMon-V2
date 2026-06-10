@@ -1,0 +1,27 @@
+{
+  "name": "digital-wellbeing-activity-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack Digital Wellbeing and macOS activity monitoring dashboard.",
+  "workspaces": [
+    "frontend",
+    "backend",
+    "desktop-agent"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace backend\" \"npm run dev --workspace frontend\"",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "dev:backend": "npm run dev --workspace backend",
+    "dev:agent": "npm run dev --workspace desktop-agent",
+    "build": "npm run build --workspace backend && npm run build --workspace frontend && npm run build --workspace desktop-agent",
+    "lint": "npm run lint --workspace frontend && npm run lint --workspace backend && npm run lint --workspace desktop-agent",
+    "typecheck": "npm run typecheck --workspace frontend && npm run typecheck --workspace backend && npm run typecheck --workspace desktop-agent"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20.11.0",
+    "npm": ">=10.0.0"
+  }
+}
